@@ -58,7 +58,7 @@ func isDir(name string) bool {
 	return fi.Mode().IsDir()
 }
 
-func bfsd(queue []entry) []entry {
+func bfsd(queue []entry, printFiles bool, printDirs bool) []entry {
 	newQueue := []entry{}
 	for _, e := range queue {
 		dir := e.path
@@ -89,7 +89,7 @@ func bfsd(queue []entry) []entry {
 		}
 		f.Close()
 
-		if dir != "." {
+		if dir != "." && printDirs {
 			fmt.Println(dir)
 		}
 
@@ -101,7 +101,7 @@ func bfsd(queue []entry) []entry {
 					references[repo] += 1
 				}
 				newQueue = append(newQueue, entry{path, repo})
-			} else {
+			} else if printFiles {
 				fmt.Println(path)
 			}
 		}
@@ -114,17 +114,21 @@ func bfsd(queue []entry) []entry {
 }
 
 func main() {
-	var queue []entry
-	if len(os.Args) == 1 {
-		queue = []entry{entry{".", nil}}
-	} else {
-		for _, name := range os.Args[1:] {
-			if isDir(name) {
-				queue = append(queue, entry{name, nil})
+	var printFiles bool = true
+	var printDirs bool = true
+	if len(os.Args) > 1 {
+		for _, arg := range os.Args[1:] {
+			if arg == "-d" {
+				printFiles = false
+				printDirs = true
+			} else if arg == "-f" {
+				printFiles = true
+				printDirs = false
 			}
 		}
 	}
+	var queue []entry = []entry{entry{".", nil}}
 	for len(queue) > 0 {
-		queue = bfsd(queue)
+		queue = bfsd(queue, printFiles, printDirs)
 	}
 }
