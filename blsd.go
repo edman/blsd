@@ -89,7 +89,9 @@ func bfsd(queue []entry) []entry {
 		}
 		f.Close()
 
-		fmt.Println(dir)
+		if dir != "." {
+			fmt.Println(dir)
+		}
 
 		for _, fi := range fis {
 			name := fi.Name()
