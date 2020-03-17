@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 
 	"github.com/libgit2/git2go"
 )
@@ -116,6 +117,7 @@ func bfsd(queue []entry, printFiles bool, printDirs bool) []entry {
 func main() {
 	var printFiles bool = true
 	var printDirs bool = true
+	var dir string = "."
 	if len(os.Args) > 1 {
 		for _, arg := range os.Args[1:] {
 			if arg == "-d" {
@@ -124,10 +126,13 @@ func main() {
 			} else if arg == "-f" {
 				printFiles = true
 				printDirs = false
+
+			} else if strings.HasPrefix(arg, "--dir=") {
+				dir = arg[6:]
 			}
 		}
 	}
-	var queue []entry = []entry{entry{".", nil}}
+	var queue []entry = []entry{entry{dir, nil}}
 	for len(queue) > 0 {
 		queue = bfsd(queue, printFiles, printDirs)
 	}
