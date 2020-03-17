@@ -99,6 +99,8 @@ func bfsd(queue []entry) []entry {
 					references[repo] += 1
 				}
 				newQueue = append(newQueue, entry{path, repo})
+			} else {
+				fmt.Println(path)
 			}
 		}
 		if repo != nil && references[repo] == 1 {
